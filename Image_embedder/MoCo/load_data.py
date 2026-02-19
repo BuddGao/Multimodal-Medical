@@ -19,9 +19,10 @@ def load_data(args):
     elif data_name =='CMMD':
         root_dir = "./../../medical_dataset/CMMD/image_2D/"
     elif data_name =='QIN':
-        root_dir = './../../medical_dataset/QIN/image_2D/'
+        root_dir ='/content/drive/MyDrive/MML/QIN/image_2D/'
 
     files = os.listdir(root_dir)
+    print(root_dir)
     i=0
     name_list = []
     for file in tqdm(files):
@@ -41,12 +42,22 @@ def load_data(args):
             if 'CMMD' in root_dir:
                 id_ = file.split('-')[0][-1] +file.split('-')[1][0:4]
                 num = '0'
+            elif 'QIN' in root_dir:
+            # Format: Breast_MRI_001_0.png
+              #print('YYYYYYYYYYYYYYYYYYYYYYYYYY')
+              parts = file.split('.')
+            
+            # Parse Subject ID: QIN-BREAST-01-0001
+              subject_str = parts[0]
+              coordinate0, coordinate1, id_, num = subject_str.split('_')
+            
+    
             else:
-                id_, num, coordinate = file.split('_')
+                coordinate0, coordinate1,id_, num = file.split('_')
             #0000 for escape from unexpected duplication of id + num
-            names = int(id_ +'0000' + num)
+            names = int(id_)
             name_list.append(names)
-
+            
             del img
             del gray
             del gray_three
@@ -64,9 +75,20 @@ def load_data(args):
             if 'CMMD' in root_dir:
                 id_ = file.split('-')[0][-1] +file.split('-')[1][0:4]
                 num = '0'
+            elif 'QIN' in root_dir:
+            # Format: Breast_MRI_001_0.png
+              
+              parts = file.split('.')
+            
+            # Parse Subject ID: QIN-BREAST-01-0001
+              subject_str = parts[0]
+              coordinate0, coordinate1, id_, num = subject_str.split('_')
+            
+    
+           
             else:
                 id_, num, coordinate = file.split('_')
-            names = int(id_ +'0000' + num)
+            names = int(id_)
             name_list.append(names)
             
             del img
