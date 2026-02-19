@@ -13,7 +13,7 @@ def loads(args):
     metapaths = args.metapaths_list
     sc = args.sc
 
-    data = pkl.load(open('data/{}.pkl'.format(dataset), "rb"))
+    data = pkl.load(open('/content/drive/MyDrive/MML/QIN/qin.pkl'.format(dataset), "rb"))
     label = data['label']
     N = label.shape[0]
 
