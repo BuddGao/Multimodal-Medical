@@ -9,7 +9,7 @@ from simclr_micle import SimCLR_micle
 from load_data import load_data
 from dataloader import TensorData
 import numpy as np
-
+import os
 model_names = sorted(name for name in models.__dict__
                      if name.islower() and not name.startswith("__")
                      and callable(models.__dict__[name]))
@@ -75,7 +75,8 @@ def main():
         num_workers=args.workers, pin_memory=True, drop_last=True)	 
     ##########
 
-
+    save_dir = '/content/drive/MyDrive/MML/QIN/extracted_feature'
+    os.makedirs(save_dir, exist_ok=True)
 
     #load model
     model = ResNetSimCLR(base_model=args.arch, out_dim=args.out_dim)
@@ -110,8 +111,13 @@ def main():
                 del feat_
             kkk+=1
     n = feat.detach().cpu().numpy()
-    np.savetxt('/content/drive/MyDrive/MML/QIN/extracted_feature/train_feature.csv',n,delimiter=',')
-    np.savetxt('/content/drive/MyDrive/MML/QIN/extracted_feature/train_id.csv',extract_names,delimiter=',')
+
+    file_name_1 = 'train_feature.csv'
+    file_name_2 = 'train_id.csv'
+    save_path_1 = os.path.join(save_dir, file_name_1)
+    save_path_2 = os.path.join(save_dir, file_name_2)
+    np.savetxt(save_path_1,n,delimiter=',')
+    np.savetxt(save_path_2,extract_names,delimiter=',')
 
 
 if __name__ == "__main__":
