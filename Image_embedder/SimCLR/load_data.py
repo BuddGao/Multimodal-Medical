@@ -55,9 +55,9 @@ def load_data(args):
             else:
                 coordinate0, coordinate1,id_, num = file.split('_')
             #0000 for escape from unexpected duplication of id + num
-            names = int(id_ +'0000' + num)
+            names = int(id_)
             name_list.append(names)
-
+            
             del img
             del gray
             del gray_three
@@ -88,7 +88,7 @@ def load_data(args):
            
             else:
                 id_, num, coordinate = file.split('_')
-            names = int(id_ +'0000' + num)
+            names = int(id_)
             name_list.append(names)
             
             del img
