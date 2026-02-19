@@ -101,5 +101,5 @@ def load_data(args):
             label_list__.append(l)
             del coor_img_t
         ii+=1
-    del iamges
+    del images
     return train_images,train_names, image_list, label_list__
