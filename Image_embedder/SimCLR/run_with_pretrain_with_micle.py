@@ -15,12 +15,12 @@ model_names = sorted(name for name in models.__dict__
                      and callable(models.__dict__[name]))
 
 parser = argparse.ArgumentParser(description='PyTorch SimCLR')
-parser.add_argument('--data', type='str', default='ADNI')
+parser.add_argument('--data', type=str, default='QIN')
 parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet18',
                     choices=model_names,
                     help='model architecture: ' +
                          ' | '.join(model_names) +
-                         ' (default: resnet50)')
+                         ' (QINdefault: resnet50)')
 parser.add_argument('-j', '--workers', default=12, type=int, metavar='N',
                     help='number of data loading workers (default: 32)')
 parser.add_argument('--epochs', default=50, type=int, metavar='N',
@@ -80,7 +80,7 @@ def main():
     #load model
     model = ResNetSimCLR(base_model=args.arch, out_dim=args.out_dim)
     with torch.cuda.device(args.gpu_index):
-        checkpoint = torch.load('./runs/Pretrain_model_emb1024/checkpoint_0100.pth.tar', map_location=args.device)
+        checkpoint = torch.load('/content/drive/MyDrive/MML/QIN/Pretrain_model_emb1024/checkpoint_0100.pth.tar', map_location=args.device)
 
     state_dict = checkpoint['state_dict']
     model.load_state_dict(state_dict, strict=False)
@@ -110,8 +110,8 @@ def main():
                 del feat_
             kkk+=1
     n = feat.detach().cpu().numpy()
-    np.savetxt('./extracted_feature/train_feature.csv',n,delimiter=',')
-    np.savetxt('./extracted_feature/train_id.csv',extract_names,delimiter=',')
+    np.savetxt('/content/drive/MyDrive/MML/QIN/extracted_feature/train_feature.csv',n,delimiter=',')
+    np.savetxt('/content/drive/MyDrive/MML/QIN/extracted_feature/train_id.csv',extract_names,delimiter=',')
 
 
 if __name__ == "__main__":
