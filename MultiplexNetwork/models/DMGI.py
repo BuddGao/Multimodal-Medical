@@ -1,7 +1,7 @@
 # Code based on https://github.com/pcy1302/DMGI/blob/master/models/DMGI.py
 
 import torch
-
+import os
 torch.manual_seed(0)
 torch.cuda.manual_seed_all(0)
 
@@ -32,6 +32,9 @@ class DMGI(embedder):
         cnt_wait = 0; best = 1e9
         b_xent = nn.BCEWithLogitsLoss()
         xent = nn.CrossEntropyLoss()
+        save_dir = '/content/drive/MyDrive/MML/QIN/saved_model'
+        os.makedirs(save_dir, exist_ok=True)
+
         for epoch in trange(self.args.nb_epochs):
             xent_loss = None
             model.train()
@@ -67,7 +70,7 @@ class DMGI(embedder):
             if loss < best:
                 best = loss
                 cnt_wait = 0
-                torch.save(model.state_dict(), 'saved_model/best_{}_{}_{}.pkl'.format(self.args.dataset, self.args.embedder, self.args.metapaths))
+                torch.save(model.state_dict(), '/content/drive/MyDrive/MML/QIN/saved_model/best_{}_{}_{}.pkl'.format(self.args.dataset, self.args.embedder, self.args.metapaths))
             else:
                 cnt_wait += 1
 
@@ -77,7 +80,7 @@ class DMGI(embedder):
             loss.backward()
             optimiser.step()
 
-        model.load_state_dict(torch.load('saved_model/best_{}_{}_{}.pkl'.format(self.args.dataset, self.args.embedder, self.args.metapaths)))
+        model.load_state_dict(torch.load('/content/drive/MyDrive/MML/QIN/saved_model/best_{}_{}_{}.pkl'.format(self.args.dataset, self.args.embedder, self.args.metapaths)))
 
         # Evaluation
         model.eval()
