@@ -9,14 +9,20 @@ def parse_args():
     return parser.parse_known_args()
 args, unknown = parse_args()
 K = args.K
-data = pd.read_excel('./../non-image/QIN/QIN_clinical.xlsx')
+data = pd.read_excel('/content/drive/MyDrive/MML/medical_dataset/Duke/Clinical_and_Other_Features.xlsx', header=1)
+data = data.drop([0])
+
+
+data = data.reset_index(drop=True)
+data['Sum grade'] = data['Sum grade'].astype('Int64')
+data['Nottingham grade']=data['Nottingham grade'].fillna(data['Sum grade'])
 na_drop_list = []
 for col in data.keys():
     if sum(data[col].isna())/len(data) > 0.1:
-        print(col)
+        #print(col)
         na_drop_list.append(col)
     # print(sum(data[col].isna()))
-na_drop_list  = ['Staging(Tumor Size)# [T]','Mol Subtype','Number of Ovaries In Situ \n','Race and Ethnicity'] + na_drop_list +['Days to last local recurrence free assessment (from the date of diagnosis) ', 'Days to last distant recurrence free assemssment(from the date of diagnosis) ','Days to Surgery (from the date of diagnosis)','Days to MRI (From the Date of Diagnosis)']
+#na_drop_list  = ['Staging(Tumor Size)# [T]','Mol Subtype','Number of Ovaries In Situ \n','Race and Ethnicity'] + na_drop_list +['Days to last local recurrence free assessment (from the date of diagnosis) ', 'Days to last distant recurrence free assemssment(from the date of diagnosis) ','Days to Surgery (from the date of diagnosis)','Days to MRI (From the Date of Diagnosis)']
 data.drop(columns = na_drop_list, inplace=True)
 for col in data.keys():
     data[col].fillna(data[col].mode()[0])
@@ -26,27 +32,27 @@ data_non_dmgi = data.copy()
 # data_non_dmgi['age_'] = pd.qcut(data_non_dmgi['ageAtEntry'], 5, labels=False)
 # use_clinical['height_'] = pd.qcut(use_clinical['height'], 3, labels=False)
 # use_clinical['weight_'] = pd.qcut(use_clinical['weight'], 3, labels=False)
-
 for col in numerical:
     data_non_dmgi[col] = pd.qcut(data_non_dmgi[col],5, labels=False)
 sub = data_non_dmgi['Patient ID']
-cdr = data_non_dmgi['Tumor Grade']
-data_non_dmgi_drop = data_non_dmgi.drop(columns=['Patient ID','Tumor Grade'])
+cdr = data_non_dmgi['Nottingham grade']
+data_non_dmgi_drop = data_non_dmgi.drop(columns=['Patient ID','Tumor Grade','Unnamed: 32','Unnamed: 32','Summation','Sum grade'])
 data_non_dmgi_drop_dum = pd.get_dummies(data_non_dmgi_drop, columns=data_non_dmgi_drop.keys())
 feature_dict = {}
 label_dict = {}
 i = 0
 # use_clinical_dummy_no = use_clinical_dummy.drop(columns=['cdr','age_','apoe']).fillna(0)
-
 for s in sub:
-    feature_dict[s] = data_non_dmgi_drop_dum.iloc[i].to_numpy()
+
+    feature_dict[s] =data_non_dmgi_drop_dum.iloc[i].to_numpy()
     label_dict[s] = cdr[i]
+
     i+=1
 data_dmgi = data.drop(columns=['Date of Birth (Days)'])
-path_ = '../../moco/'
-features = np.loadtxt('./' + path_ + 'breast_feature.csv',delimiter=',',dtype=np.float32)
+path_ = '/content/drive/MyDrive/MML/QIN/extracted_feature/'
+features = np.loadtxt( path_ + 'train_feature.csv',delimiter=',',dtype=np.float32)
 # valid_feature = np.loadtxt('./' + path_ + 'valid_feature.csv',delimiter=',',dtype=np.float32)
-ids = pd.read_csv('./' + path_ +'breast_id.csv', header=None)
+ids = pd.read_csv( path_ +'train_id.csv', header=None)
 # valid_id = pd.read_csv('./' + path_ +'valid_id.csv', header=None)
 for col in data_dmgi:
     data_dmgi[col].fillna(data_dmgi[col].mode()[0],inplace=True)
@@ -56,25 +62,27 @@ for col in data_dmgi.keys():
     idx_list.append(idx)
     if len(idx)>0:
         data_dmgi.loc[idx, col] = -1
-k_means_list = data_dmgi.drop(columns = ['Patient ID', 'Tumor Grade']).keys()
+k_means_list = data_dmgi.drop(columns = ['Patient ID','Tumor Grade','Unnamed: 32','Unnamed: 32','Summation','Sum grade']).select_dtypes(include=[np.number]).keys()
 import random
 transpose_num = data_dmgi[k_means_list].T
-from sklearn.cluster import KMeans 
+from sklearn.cluster import KMeans
 kmeans = KMeans(n_clusters=K)
 kmeans.fit(transpose_num)
+
 type_list = []
 for k in range(K):
     type_list.append([])
 for i in range(len(k_means_list)):
     type_list[kmeans.labels_[i]].append(k_means_list[i])
-    
+
+processed_ids = [f"{int(idss):03}" for idss in ids[0].tolist()]
 id_list = []
-for idss in ids[0]:
-    a = 'Breast_MRI_' + str(idss)[1:4]
+for processed_id in processed_ids:
+    a = 'Breast_MRI_' + processed_id
     id_list.append(a)
 from sklearn.preprocessing import minmax_scale
 import sklearn
-from sklearn.cluster import KMeans 
+from sklearn.cluster import KMeans
 import sklearn.metrics.pairwise
 
 k = 0
@@ -112,6 +120,11 @@ for types in type_list:
 
 feat = []
 lab = []
+
+
+
+
+
 
 for i in range(len(id_list)):
     a_ = id_list[i]
@@ -186,6 +199,7 @@ elif K ==2:
     adj_0 = save_list[0]
     adj_1 = save_list[1]
     oasis3_multi = {'label':y,'type0':adj_0,'type1':adj_1,'train_idx':train_index,'val_idx':valid_index,'test_idx':test_index,'feature':concate_feature}
-  
-with open('./MultiplexNetwork/data/qin.pkl', 'wb') as f:
+
+with open('/content/drive/MyDrive/MML/QIN/qin.pkl', 'wb') as f:
     pickle.dump(oasis3_multi, f, pickle.HIGHEST_PROTOCOL)
+    
