@@ -14,7 +14,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='DMGI')
 
     parser.add_argument('--embedder', nargs='?', default='DMGI')
-    parser.add_argument('--dataset', nargs='?', default='ADNI')
+    parser.add_argument('--dataset', nargs='?', default='Duke_GIRI')
     parser.add_argument('--metapaths', nargs='?', default='type0,type1,type2,type3')
 
     parser.add_argument('--nb_epochs', type=int, default=10000)

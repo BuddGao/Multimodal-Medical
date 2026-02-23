@@ -81,10 +81,11 @@ def evaluate(embeds, idx_train, idx_val, idx_test, labels, device, isTest=True):
         max_iter = val_micro_f1s.index(max(val_micro_f1s))
         micro_f1s.append(test_micro_f1s[max_iter])
     if isTest:
-        print("\t[Classification] Macro-F1: {:.4f} ({:.4f}) | Micro-F1: {:.4f} ({:.4f})".format(np.mean(macro_f1s),
+        print("\t[Classification] Macro-F1: {:.4f} ({:.4f}) | Micro-F1: {:.4f} ({:.4f})| Test accuracy: {:.4f}".format(np.mean(macro_f1s),
                                                                                                 np.std(macro_f1s),
                                                                                                 np.mean(micro_f1s),
-                                                                                                np.std(micro_f1s)))
+                                                                                                np.std(micro_f1s),
+                                                                                                np.mean(accs)))
         print("\t[Maximums] Macro-F1: {:.4f} | Micro-F1: {:.4f} | Test accuracy: {:.4f}".format(np.max(macro_f1s),np.max(micro_f1s),np.max(accs)))
     else:
         return np.mean(macro_f1s_val), np.mean(macro_f1s)
