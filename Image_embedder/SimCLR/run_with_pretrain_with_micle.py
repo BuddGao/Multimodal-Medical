@@ -15,8 +15,8 @@ model_names = sorted(name for name in models.__dict__
                      and callable(models.__dict__[name]))
 
 parser = argparse.ArgumentParser(description='PyTorch SimCLR')
-parser.add_argument('--data', type=str, default='QIN')
-parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet18',
+parser.add_argument('--data', type=str, default='Duke')
+parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet50',
                     choices=model_names,
                     help='model architecture: ' +
                          ' | '.join(model_names) +
@@ -25,7 +25,7 @@ parser.add_argument('-j', '--workers', default=12, type=int, metavar='N',
                     help='number of data loading workers (default: 32)')
 parser.add_argument('--epochs', default=50, type=int, metavar='N',
                     help='number of total epochs to run')
-parser.add_argument('-b', '--batch-size', default=256, type=int,
+parser.add_argument('-b', '--batch-size', default=1024, type=int,
                     metavar='N',
                     help='mini-batch size (default: 256), this is the total '
                          'batch size of all GPUs on the current node when '
@@ -75,13 +75,13 @@ def main():
         num_workers=args.workers, pin_memory=True, drop_last=True)	 
     ##########
 
-    save_dir = '/content/drive/MyDrive/MML/QIN/extracted_feature'
+    save_dir = '/content/drive/MyDrive/MML/medical_dataset/Duke/extracted_feature'
     os.makedirs(save_dir, exist_ok=True)
 
     #load model
     model = ResNetSimCLR(base_model=args.arch, out_dim=args.out_dim)
     with torch.cuda.device(args.gpu_index):
-        checkpoint = torch.load('/content/drive/MyDrive/MML/QIN/Pretrain_model_emb1024/checkpoint_0100.pth.tar', map_location=args.device)
+        checkpoint = torch.load('/content/drive/MyDrive/MML/medical_dataset/Duke/resnet50_imagenet_bs2k_epochs600_linear.pth.tar', map_location=args.device)
 
     state_dict = checkpoint['state_dict']
     model.load_state_dict(state_dict, strict=False)

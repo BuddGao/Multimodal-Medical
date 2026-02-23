@@ -82,7 +82,7 @@ class SimCLR_micle(object):
 
 
         n_iter = 0
-        save_dir = f'/content/drive/MyDrive/MML/QIN/simclr_micle'
+        save_dir = f'/content/drive/MyDrive/MML/medical_dataset/Duke/simclr_micle'
         os.makedirs(save_dir, exist_ok=True)
         for epoch_counter in range(self.args.epochs):
             for images, _ in tqdm(train_loader):

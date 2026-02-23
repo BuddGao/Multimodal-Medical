@@ -20,6 +20,8 @@ def load_data(args):
         root_dir = "./../../medical_dataset/CMMD/image_2D/"
     elif data_name =='QIN':
         root_dir ='/content/drive/MyDrive/MML/QIN/image_2D/'
+    elif data_name =='Duke':
+        root_dir ='/content/drive/MyDrive/MML/medical_dataset/Duke/image_2D/'
 
     files = os.listdir(root_dir)
     print(root_dir)
@@ -42,7 +44,7 @@ def load_data(args):
             if 'CMMD' in root_dir:
                 id_ = file.split('-')[0][-1] +file.split('-')[1][0:4]
                 num = '0'
-            elif 'QIN' in root_dir:
+            elif 'Duke' in root_dir:
             # Format: Breast_MRI_001_0.png
               #print('YYYYYYYYYYYYYYYYYYYYYYYYYY')
               parts = file.split('.')
@@ -75,7 +77,7 @@ def load_data(args):
             if 'CMMD' in root_dir:
                 id_ = file.split('-')[0][-1] +file.split('-')[1][0:4]
                 num = '0'
-            elif 'QIN' in root_dir:
+            elif 'Duke' in root_dir:
             # Format: Breast_MRI_001_0.png
               
               parts = file.split('.')
