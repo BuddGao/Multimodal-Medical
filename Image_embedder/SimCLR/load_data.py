@@ -2,7 +2,7 @@ import os
 import numpy as np
 import torch
 import torchvision.transforms as transforms
-
+import re
 from tqdm import tqdm
 import cv2
 
@@ -22,6 +22,8 @@ def load_data(args):
         root_dir ='/content/drive/MyDrive/MML/QIN/image_2D/'
     elif data_name =='Duke':
         root_dir ='/content/drive/MyDrive/MML/medical_dataset/Duke/image_2D/'
+    elif data_name =='Duke_GIRI':
+        root_dir ='/content/drive/MyDrive/MML/medical_dataset/Duke_GIRI/image_2D/'    
 
     files = os.listdir(root_dir)
     print(root_dir)
@@ -44,7 +46,7 @@ def load_data(args):
             if 'CMMD' in root_dir:
                 id_ = file.split('-')[0][-1] +file.split('-')[1][0:4]
                 num = '0'
-            elif 'Duke' in root_dir:
+            elif data_name =='Duke':
             # Format: Breast_MRI_001_0.png
               #print('YYYYYYYYYYYYYYYYYYYYYYYYYY')
               parts = file.split('.')
@@ -52,12 +54,20 @@ def load_data(args):
             # Parse Subject ID: QIN-BREAST-01-0001
               subject_str = parts[0]
               coordinate0, coordinate1, id_, num = subject_str.split('_')
+            elif 'Duke_GIRI' in root_dir:
+            # Format: Breast_MRI_024slice_90_stack.png
+              #print('YYYYYYYYYYYYYYYYYYYYYYYYYY')
+              parts = file.split('.')
             
-    
+            # Parse Subject ID: QIN-BREAST-01-0001
+              subject_str = parts[0]
+              coordinate0, coordinate1, id_, num, coordinate2 = subject_str.split('_')            
+            
+
             else:
                 coordinate0, coordinate1,id_, num = file.split('_')
             #0000 for escape from unexpected duplication of id + num
-            names = int(id_)
+            names = int(re.search(r'\d+', id_).group())
             name_list.append(names)
             
             del img
@@ -77,7 +87,7 @@ def load_data(args):
             if 'CMMD' in root_dir:
                 id_ = file.split('-')[0][-1] +file.split('-')[1][0:4]
                 num = '0'
-            elif 'Duke' in root_dir:
+            elif data_name =='Duke':
             # Format: Breast_MRI_001_0.png
               
               parts = file.split('.')
@@ -86,11 +96,19 @@ def load_data(args):
               subject_str = parts[0]
               coordinate0, coordinate1, id_, num = subject_str.split('_')
             
-    
+            elif 'Duke_GIRI' in root_dir:
+            # Format: Breast_MRI_024slice_90_stack.png
+              
+              parts = file.split('.')
+            
+            # Parse Subject ID: QIN-BREAST-01-0001
+              subject_str = parts[0]
+              coordinate0, coordinate1, id_, num, coordinate2= subject_str.split('_')
+                
            
             else:
                 id_, num, coordinate = file.split('_')
-            names = int(id_)
+            names = int(int(re.search(r'\d+', id_).group()))
             name_list.append(names)
             
             del img
